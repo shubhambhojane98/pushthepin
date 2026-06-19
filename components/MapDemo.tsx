@@ -9,7 +9,7 @@ export interface CivicPin {
   lat: number;
   lng: number;
   title: string;
-  category: "streetlight" | "potholes" | "garbage" | "water issues";
+  category: "streetlight" | "potholes" | "garbage" | "water issues" | "safety"; // ✨ Added safety here
   details: string;
 }
 
@@ -28,10 +28,11 @@ export default function MapDemo({ center, pins, onMapClick }: MapDemoProps) {
 
   const getCategoryColor = (cat: string) => {
     switch (cat) {
-      case "streetlight": return "#eab308"; 
-      case "potholes": return "#ea580c";    
-      case "garbage": return "#78350f";     
-      case "water issues": return "#2563eb"; 
+      case "safety": return "#dc2626";      // ✨ Crimson Red for Safety alerts
+      case "streetlight": return "#eab308"; // Amber
+      case "potholes": return "#ea580c";    // Orange
+      case "garbage": return "#78350f";     // Brown
+      case "water issues": return "#2563eb"; // Blue
       default: return "#ef4444";
     }
   };
@@ -39,12 +40,18 @@ export default function MapDemo({ center, pins, onMapClick }: MapDemoProps) {
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    // 1. Initialize Map Instance once
+    const centerLatLng = L.latLng(center[0], center[1]);
+    const bounds = centerLatLng.toBounds(1000); 
+
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = L.map(mapContainerRef.current, {
         zoomControl: true,
         scrollWheelZoom: true,
-      }).setView(center, 14);
+        minZoom: 14,
+        maxZoom: 18,
+        maxBounds: bounds,
+        maxBoundsViscosity: 1.0,
+      }).fitBounds(bounds);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors",
@@ -54,9 +61,9 @@ export default function MapDemo({ center, pins, onMapClick }: MapDemoProps) {
     }
 
     const map = mapInstanceRef.current;
-    map.flyTo(center, 14, { duration: 1.2 });
+    map.setMaxBounds(bounds);
+    map.flyToBounds(bounds, { duration: 1.2 });
 
-    // 2. Clear old center point references
     if (centerMarkerRef.current) centerMarkerRef.current.remove();
     if (circleRef.current) circleRef.current.remove();
 
@@ -73,25 +80,21 @@ export default function MapDemo({ center, pins, onMapClick }: MapDemoProps) {
     circleRef.current = L.circle(center, {
       color: "#ef4444",
       fillColor: "#f87171",
-      fillOpacity: 0.1,
-      radius: 1000, // 1 Kilometers
+      fillOpacity: 0.05,
+      radius: 1000, 
     }).addTo(map);
 
-    // 3. FIX: Clear old click listeners and bind a clean one with the NEW center context
     map.off("click"); 
     map.on("click", (e: L.LeafletMouseEvent) => {
       const clickedLatLng = e.latlng;
-      const centerLatLng = L.latLng(center[0], center[1]); // Always references current fresh center state
-      
       const distanceMeters = centerLatLng.distanceTo(clickedLatLng);
       const distanceKm = distanceMeters / 1000;
 
       onMapClick(clickedLatLng.lat, clickedLatLng.lng, distanceKm);
     });
 
-  }, [center, onMapClick]); // Triggers listener re-binding safely whenever center switches
+  }, [center, onMapClick]);
 
-  // Render Pins Hook
   useEffect(() => {
     if (!mapInstanceRef.current || !activePinsGroupRef.current) return;
     activePinsGroupRef.current.clearLayers();
@@ -109,7 +112,7 @@ export default function MapDemo({ center, pins, onMapClick }: MapDemoProps) {
       const newMarker = L.marker([pin.lat, pin.lng], { icon: civicIcon })
         .bindPopup(`
           <div class="text-slate-900 font-sans p-1">
-            <h4 class="font-bold text-xs capitalize border-b pb-1 mb-1" style="color: ${pinColor}">⚠️ ${pin.category}</h4>
+            <h4 class="font-bold text-xs capitalize border-b pb-1 mb-1" style="color: ${pinColor}">🚨 ${pin.category}</h4>
             <p class="font-semibold text-xs my-0.5">${pin.title}</p>
             <p class="text-[11px] text-slate-500 leading-tight">${pin.details}</p>
           </div>

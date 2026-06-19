@@ -197,6 +197,7 @@ function DashboardContent() {
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-red-500 text-slate-900 capitalize"
                   >
                     <option value="streetlight">💡 Streetlight Issue</option>
+                    <option value="safety">🚨 Neighborhood Safety Alert</option>
                     <option value="potholes">🚗 Potholes & Road Cracks</option>
                     <option value="garbage">🚮 Garbage & Waste Clutter</option>
                     <option value="water issues">🚰 Water Issues / Leaks</option>
@@ -264,6 +265,7 @@ function DashboardContent() {
             </div>
             <div className="flex gap-3 text-[10px] font-bold text-slate-500">
               <span className="flex items-center gap-1"> <span className="w-2 h-2 rounded-full bg-yellow-500"/> Light</span>
+              <span className="flex items-center gap-1"> <span className="w-2 h-2 rounded-full bg-red-600"/> Safety</span>
               <span className="flex items-center gap-1"> <span className="w-2 h-2 rounded-full bg-orange-600"/> Road</span>
               <span className="flex items-center gap-1"> <span className="w-2 h-2 rounded-full bg-amber-900"/> Waste</span>
               <span className="flex items-center gap-1"> <span className="w-2 h-2 rounded-full bg-blue-600"/> Water</span>
