@@ -74,7 +74,7 @@ export default function MapDemo({ center, pins, onMapClick }: MapDemoProps) {
       color: "#ef4444",
       fillColor: "#f87171",
       fillOpacity: 0.1,
-      radius: 1000, // 2 Kilometers
+      radius: 1000, // 1 Kilometers
     }).addTo(map);
 
     // 3. FIX: Clear old click listeners and bind a clean one with the NEW center context

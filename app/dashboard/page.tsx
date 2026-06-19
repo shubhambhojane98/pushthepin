@@ -66,8 +66,8 @@ function DashboardContent() {
 
   // Handle Map Interaction Clicks
   const handleMapClick = (lat: number, lng: number, distanceKm: number) => {
-    if (distanceKm > 2.0) {
-      setFormError(`Out of bounds! That point is ${(distanceKm).toFixed(2)}km away. You can only pin issues within your strict 2km community radius.`);
+    if (distanceKm > 1.0) {
+      setFormError(`Out of bounds! That point is ${(distanceKm).toFixed(2)}km away. You can only pin issues within your strict 1km community radius.`);
       setSelectedCoords(null);
       return;
     }
